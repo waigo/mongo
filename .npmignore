@@ -1,0 +1,7 @@
+node_modules/
+.idea
+*.iml
+test
+.travis.yml
+.jshintrc
+Gruntfile.coffee

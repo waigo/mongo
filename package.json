@@ -1,0 +1,46 @@
+{
+  "name": "waigo-mongo",
+  "version": "0.1.0",
+  "description": "Mongo database connection and session store for Waigo",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test node --harmony `which grunt`"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/waigo/mongo.git"
+  },
+  "keywords": [
+    "waigo",
+    "waigoplugin",
+    "koa",
+    "response-time",
+    "middleware",
+    "headers",
+    "http"
+  ],
+  "author": "Ramesh Nair <ram@hiddentao.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/waigo/mongo/issues"
+  },
+  "homepage": "https://github.com/waigo/mongo",
+  "devDependencies": {
+    "load-grunt-tasks": "~0.4.0",
+    "grunt": "~0.4.4",
+    "grunt-mocha-test": "~0.10.0",
+    "waigo": ">=0.5.1",
+    "supertest": "~0.10.0",
+    "chai": "~1.9.1",
+    "matchdep": "~0.3.0",
+    "shelljs": "~0.2.6",
+    "co": "~3.0.5",
+    "waigo-test-utils": "git+https://github.com/waigo/test-utils.git"
+  },
+  "dependencies": {
+    "bluebird": "~1.1.1",
+    "koa-session-mongo": "~1.0.0",
+    "mongoose": "~3.6.20",
+    "debug": "~0.7.4"
+  }
+}
