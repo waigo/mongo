@@ -1,6 +1,5 @@
 var waigo = require('waigo');
 
-var app = waigo.load('app');
 
 module.exports = function(config) {
   waigo.load('waigo:config/base')(config);
@@ -8,13 +7,15 @@ module.exports = function(config) {
   config.port = parseInt(Math.random() * 20000 + 10000);
   config.baseURL = 'http://localhost:' + config.port;
 
-  config.startupSteps = ['logging', 'middleware', 'routes', 'listener', 'database'];
+  var app = waigo.load('application').app;
 
-  config.db = app.testConfig.db;
+  config.startupSteps = app.testConfig.startupSteps || [];
 
-  config.sessions = app.testConfig.sessions;
+  config.db = app.testConfig.db || null;
 
-  config.middleware = app.testConfig.middleware;
+  config.sessions = app.testConfig.sessions || null;
+
+  config.middleware = app.testConfig.middleware || [];
 };
 
 

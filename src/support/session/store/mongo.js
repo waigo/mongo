@@ -1,7 +1,10 @@
 "use strict";
 
 
-var mongoStore = require('koa-session-mongo');
+var debug = require('debug')('waigo-mongo'),
+  mongoStore = require('koa-session-mongo');
+
+
 
 /**
  * Create a new session store.
@@ -10,6 +13,8 @@ var mongoStore = require('koa-session-mongo');
  * @return {Object}
  */
 exports.create = function(app, storeConfig) {
+  debug('Initialising Mongo session store...');
+  
   // re-use the app mongoose db connection?
   if (storeConfig.useAppMongooseDbConn) {
     app.logger.info('Session store will use app Mongoose db connection');
