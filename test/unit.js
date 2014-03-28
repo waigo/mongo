@@ -15,6 +15,8 @@ test['session'] = {
   beforeEach: function(done) {
     var self = this;
 
+    shell.cp('-Rf', path.join(__dirname, '/../src/support'), utils.appFolder);
+
     co(function*() {
       yield* waigo.init({
         appFolder: utils.appFolder
@@ -24,6 +26,11 @@ test['session'] = {
         return 123;
       });
     })(done);
+  },
+
+  afterEach: function(done) {    
+    shell.rm('-rf', path.join(utils.appFolder, 'support'));
+    done();
   },
 
   'default': function() {
