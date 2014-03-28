@@ -1,35 +1,61 @@
-var moment = require('moment'),
+var co = require('co'),
+  mongoSession = require('koa-session-mongo'),
   path = require('path'),
   Promise = require('bluebird');
 
-var testBase = require('../../../../_base'),
-  assert = testBase.assert,
-  expect = testBase.expect,
-  should = testBase.should,
-  testUtils = testBase.utils,
-  test = testUtils.createTest(module),
-  waigo = testBase.waigo;
+var _utils = require('waigo-test-utils')(module),
+  test = _utils.test,
+  utils = _utils.utils,
+  assert = utils.assert,
+  expect = utils.expect,
+  should = utils.should;
 
 
-test['mongoose'] = {
+test['session'] = {
   beforeEach: function(done) {
-    waigo.initAsync().nodeify(done);
+    var self = this;
+
+    co(function*() {
+      yield* waigo.init({
+        appFolder: utils.appFolder
+      });
+
+      self.createSpy = test.mocker.stub(mongoSession, 'create', function() {
+        return 123;
+      });
+    })(done);
   },
 
-  'connects to db': function() {
-    var mongoose = require('mongoose');
-
-    var connectSpy = test.mocker.stub(mongoose, 'connect', function() {});
-
-    var conn = waigo.load('support/db/mongoose').create({
+  'default': function() {
+    var conn = waigo.load('support/session/store/mongo').create(null, {
       host: 'testhost',
       port: 1000,
       db: 'testdb'
     });
 
-    connectSpy.should.have.been.calledOnce;
-    connectSpy.should.have.been.calledWithExactly('mongodb://testhost:1000/testdb');
+    expect(conn).to.eql(123);
 
-    conn.should.eql(mongoose.connection);
+    this.createSpy.should.have.been.calledOnce;
+    this.createSpy.should.have.been.calledWithExactly({
+      host: 'testhost',
+      port: 1000,
+      db: 'testdb'      
+    });
+  },
+
+  'reuse app db': function() {
+    var app = waigo.load('application').app;
+    app.logger = { info: function() {} };
+    app.db = new Date();
+
+    waigo.load('support/session/store/mongo').create(app, {
+      useAppMongooseDbConn: true
+    });
+
+    this.createSpy.should.have.been.calledOnce;
+    this.createSpy.should.have.been.calledWithExactly({
+      useAppMongooseDbConn: true,
+      mongoose: app.db
+    });
   }
 };

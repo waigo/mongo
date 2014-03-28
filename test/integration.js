@@ -97,7 +97,7 @@ test['mongo'] = {
 
 
   'session': {
-    beforeEach: function() {
+    beforeEach: function(done) {
       var self = this;
 
       self.app.testConfig.startupSteps = ['logging', 'middleware', 'routes', 'listener'];
@@ -120,27 +120,17 @@ test['mongo'] = {
           }
         }
       );
-    },
-    'bad credentials': function(done) {
-      var self = this;
 
-      self.app.testConfig.middleware[1].options.store.config = {
-        host: '127.0.0.2',
-        port: 27018,
-        db: 'waigo-mongo-test'
-      };
+      var db = mongoose.createConnection('mongodb://127.0.0.1:27017/waigo-mongo-test');
+      db.once('error', done);
+      db.once('open', function() {
+        self.DbModel = db.model('Session', new mongoose.Schema({
+          blob  :  { type: String },
+          date  :  { type: Date }
+        }));
 
-      co(function*() {
-        yield* self.Application.start();
-      })(function(err) {
-        if (err) return done(err);
-
-        self.request = request(self.app.config.baseURL);
-
-        self.request.get('/?format=json')
-          .expect(500)
-          .end(done);
-      });      
+        self.DbModel.remove(done);
+      });
     },
 
     'good credentials': function(done) {
@@ -165,23 +155,17 @@ test['mongo'] = {
           .end(function(err) {
             if (err) return done(err);
 
-            var db = mongoose.createConnection('mongodb://127.0.0.1:27017/waigo-mongo-test');
-            db.once('error', done);
-            db.once('open', function() {
-              var collection = db.collection('sessions');
+            self.DbModel.count(function(err, count) {
+              if (err) return done(err);
 
-              collection.find(function(err, results) {
-                if (err) return done(err);
+              try {
+                expect(count).to.eql(1);
 
-                try {
-                  results.length.should.eql(1);
-                  done();
-                } catch (err) {
-                  done(err);
-                }
-              });
+                done();
+              } catch (err2) {
+                done(err2);
+              }
             });
-
           });
 
       });      

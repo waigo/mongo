@@ -15,6 +15,7 @@ module.exports = (grunt) ->
           ui: 'exports'
           reporter: 'spec'
         src: [
+          '<%= config.test %>/unit.js'
           '<%= config.test %>/integration.js'
         ]
 
