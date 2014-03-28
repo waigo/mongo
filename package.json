@@ -35,7 +35,7 @@
     "matchdep": "~0.3.0",
     "shelljs": "~0.2.6",
     "co": "~3.0.5",
-    "waigo-test-utils": "git+https://github.com/waigo/test-utils.git"
+    "waigo-test-utils": "git://github.com/waigo/test-utils.git"
   },
   "dependencies": {
     "bluebird": "~1.1.1",
