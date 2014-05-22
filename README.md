@@ -17,18 +17,24 @@ $ npm install waigo-mongo
 In your configuration file enable the database startup step and add configuration info:
 
 ```javascript
-exports.startupSteps = [
+module.exports = function(config) {
   ...
-  'database'
-  ...
-];
 
-exports.db = {
-  mongoose: {
-    host: '127.0.0.1',
-    port: '27017',
-    db: 'your_db_name'
+  config.startupSteps = [
+    ...
+    'database'
+    ...
+  ];
+
+  config.db = {
+    mongoose: {
+      host: '127.0.0.1',
+      port: '27017',
+      db: 'your_db_name'
+    }
   }
+  
+  ...
 }
 ```
 
@@ -38,14 +44,20 @@ Edit the session configuration:
 
 
 ```javascript
-exports.sessions = {
+module.exports = function(config) {
   ...
 
-  store: {
-    type: 'mongo',
-    config: {
-      /* see koa-session-mongo module for configuration options */
+  config.sessions = {
+    ...
+
+    store: {
+      type: 'mongo',
+      config: {
+        /* see koa-session-mongo module for configuration options */
+      }
     }
+
+    ...
   }
 
   ...
@@ -57,4 +69,4 @@ _Note: it is possible to pass your Mongoose db connection to the mongo session s
 
 ## License
 
-MIT - see [LICENSE.md](https://github.com/waigo/response-time/blob/master/LICENSE.md).
+MIT - see LICENSE.md

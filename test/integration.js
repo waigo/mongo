@@ -36,6 +36,16 @@ test['mongo'] = {
           },
         ]
       };
+
+      self.startOptions = { postConfig: function(config) {
+        config.startupSteps = self.app.testConfig.startupSteps || [];
+        config.db = self.app.testConfig.db || null;
+        config.sessions = self.app.testConfig.sessions || null;
+        config.middleware = self.app.testConfig.middleware || { 
+          order: [],
+        };
+      }};
+
     })(done);
   },
 
@@ -66,7 +76,7 @@ test['mongo'] = {
 
       co(function*() {
         try {
-          yield* self.Application.start();
+          yield* self.Application.start(self.startOptions);
           throw new Error('should not be here');
         } catch (err) {
           expect( 0 > err.toString().indexOf('should not be here') ).to.be.true;
@@ -86,7 +96,7 @@ test['mongo'] = {
       };
 
       co(function*() {
-        yield* self.Application.start();
+        yield* self.Application.start(self.startOptions);
 
         self.app.db.should.not.be.undefined;
         self.app.db.collection('test').should.not.be.undefined;
@@ -102,10 +112,10 @@ test['mongo'] = {
 
       self.app.testConfig.startupSteps = ['logging', 'middleware', 'routes', 'listener'];
 
-      self.app.testConfig.middleware.push(
-        {
-          id: 'sessions', 
-          options: {
+      self.app.testConfig.middleware = {
+        order: ['sessions'],
+        options: {
+          sessions : {
             keys: ['use', 'your', 'own'],
             name: 'waigo',
             store: {
@@ -117,9 +127,9 @@ test['mongo'] = {
               validForDays: 7,
               path: '/'
             }
-          }
+          }          
         }
-      );
+      };
 
       var db = mongoose.createConnection('mongodb://127.0.0.1:27017/waigo-mongo-test');
       db.once('error', done);
@@ -136,7 +146,7 @@ test['mongo'] = {
     'good credentials': function(done) {
       var self = this;
 
-      self.app.testConfig.middleware[1].options.store.config = {
+      self.app.testConfig.middleware.options.sessions.store.config = {
         host: '127.0.0.1',
         port: 27017,
         db: 'waigo-mongo-test',
@@ -144,7 +154,7 @@ test['mongo'] = {
       };
 
       co(function*() {
-        yield* self.Application.start();
+        yield* self.Application.start(self.startOptions);
       })(function(err) {
         if (err) return done(err);
 

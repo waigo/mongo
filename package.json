@@ -1,6 +1,6 @@
 {
   "name": "waigo-mongo",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Mongo database connection and session store for Waigo",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,6 @@
     "waigo",
     "waigoplugin",
     "koa",
-    "response-time",
     "middleware",
     "headers",
     "http"
@@ -29,7 +28,7 @@
     "load-grunt-tasks": "~0.4.0",
     "grunt": "~0.4.4",
     "grunt-mocha-test": "~0.10.0",
-    "waigo": ">=0.5.1",
+    "waigo": "~1.2.0",
     "supertest": "~0.10.0",
     "chai": "~1.9.1",
     "matchdep": "~0.3.0",
