@@ -47,7 +47,7 @@ Edit the session configuration:
 module.exports = function(config) {
   ...
 
-  config.sessions = {
+  config.middleware.options.sessions = {
     ...
 
     store: {

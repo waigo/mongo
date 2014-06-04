@@ -40,7 +40,6 @@ test['mongo'] = {
       self.startOptions = { postConfig: function(config) {
         config.startupSteps = self.app.testConfig.startupSteps || [];
         config.db = self.app.testConfig.db || null;
-        config.sessions = self.app.testConfig.sessions || null;
         config.middleware = self.app.testConfig.middleware || { 
           order: [],
         };

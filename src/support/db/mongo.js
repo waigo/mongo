@@ -1,3 +1,7 @@
+"use strict";
+
+
+
 var debug = require('debug')('waigo-mongo'),
   mongoose = require('mongoose'),
   Promise = require('bluebird');
