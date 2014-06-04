@@ -27,7 +27,7 @@ module.exports = function(config) {
   ];
 
   config.db = {
-    mongoose: {
+    mongo: {
       host: '127.0.0.1',
       port: '27017',
       db: 'your_db_name'
