@@ -1,7 +1,7 @@
 var co = require('co'),
   mongoose = require('mongoose');
   path = require('path'),
-  Promise = require('bluebird'),
+  Q = require('bluebird'),
   request = require('supertest'),
   shell = require('shelljs'),
   waigo = require('waigo');
@@ -132,40 +132,127 @@ test['mongo'] = {
 
       s.should.be.instanceOf(mongoose.Schema);
     },
-    'can be converted to view object': function(done) {
-      var model = this.app.db.model('Test', this.schema.create({
-        name: String
-      }));
+    'timestamp fields': {
+      beforeEach: function() {
+        var model = this.app.db.model('Test', this.schema.create({
+          name: String
+        }, { 
+          addTimestampFields: true
+        }));
 
-      var m = new model({
-        name: 'bla'
-      });
+        this.m = new model({
+          name: 'bla'
+        });
+      },
+      'created': function(done) {
+        var m = this.m;
 
-      utils.spawn(m.toViewObject, m)
-        .then(function(v) {
-          v._id.should.be.defined;
-          v.name.should.eql('bla');
-        })
-        .nodeify(done);
+        Q.promisify(m.save, m)()
+          .then(function() {
+            m.created_at.should.be.instanceOf(Date);
+            m.updated_at.should.be.instanceOf(Date);            
+          })
+          .nodeify(done);
+      },
+      'updated': function(done) {
+        var old_updated_at, old_created_at;
+
+        var m = this.m;
+        var saveP = Q.promisify(m.save, m);
+
+        saveP()
+          .then(function() {
+            old_updated_at = m.updated_at;
+            old_created_at = m.created_at;
+          })
+          .then(function() {
+            m.name = 'tester';
+            
+            return saveP();
+          })
+          .then(function() {
+            m.created_at.should.eql(old_created_at);
+            m.updated_at.should.not.eql(old_updated_at);
+          })
+          .nodeify(done);
+      }
     },
-    'can limit what keys are shown in view objects': function(done) {
-      var schema = this.schema.create({
-        name: String
-      });
+    'view objects': {
+      'can be converted to view object': function(done) {
+        var model = this.app.db.model('Test', this.schema.create({
+          name: String
+        }));
 
-      schema.method('viewObjectKeys', function() {
-        return ['name'];
-      });
+        var m = new model({
+          name: 'bla'
+        });
 
-      var model = this.app.db.model('Test', schema);
+        utils.spawn(m.toViewObject, m)
+          .then(function(v) {
+            v._id.should.be.defined;
+            v.name.should.eql('bla');
+          })
+          .nodeify(done);
+      },
+      'can limit what keys are shown in view objects': function(done) {
+        var schema = this.schema.create({
+          name: String
+        });
 
-      var m = new model({
-        name: 'bla'
-      });
+        schema.method('viewObjectKeys', function() {
+          return ['name'];
+        });
 
-      utils.spawn(m.toViewObject, m)
-        .should.eventually.eql({ name: 'bla' })
-        .notify(done);
+        var model = this.app.db.model('Test', schema);
+
+        var m = new model({
+          name: 'bla'
+        });
+
+        utils.spawn(m.toViewObject, m)
+          .should.eventually.eql({ name: 'bla' })
+          .notify(done);
+      },
+      'can choose how each field gets formatted': function(done) {
+        var schema = this.schema.create({
+          name: String
+        });
+
+        schema.method('formatForViewObject', function*(ctx, key, val) {
+          return ctx.test + ': ' + key + '=' + val;
+        });
+
+        var model = this.app.db.model('Test', schema);
+
+        var m = new model({
+          name: '123'
+        });
+
+        utils.spawn(m.toViewObject, m, { test: 'bla' })
+          .then(function(v) {
+            v.name.should.eql('bla: name=123');
+          })
+          .nodeify(done);
+      },
+      'converts sub docs to view objects': function(done) {
+        var Model1 = this.app.db.model('Model1', this.schema.create({
+          name: String
+        }));
+
+        var Model2 = this.app.db.model('Model2', this.schema.create({
+          item: mongoose.Schema.Types.Mixed
+        }));
+
+        var m1 = new Model1({ name: 'tester' });
+        var m2 = new Model2({ item: m1 });
+
+        utils.spawn(m2.toViewObject, m2)
+          .then(function(v) {
+            v.item._id.should.be.defined;
+            v.item.name.should.eql('tester');
+          })
+          .nodeify(done);
+      }
     }
   },
 
