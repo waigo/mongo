@@ -1,4 +1,5 @@
 var co = require('co'),
+  mongoose = require('mongoose'),
   mongoSession = require('koa-session-mongo'),
   path = require('path'),
   Promise = require('bluebird');
@@ -66,3 +67,4 @@ test['session'] = {
     });
   }
 };
+

@@ -105,6 +105,71 @@ test['mongo'] = {
   },
 
 
+  'schema': {
+    beforeEach: function(done) {
+      var self = this;
+
+      self.schema = waigo.load('support/db/mongoose/schema');
+
+      self.app.testConfig.db = {
+        mongo: {
+          host: '127.0.0.1',
+          port: 27017,
+          db: 'waigo-mongo-test'
+        }
+      };
+
+      self.app.testConfig.startupSteps = ['logging', 'database'];
+
+      co(function*() {
+        yield* self.Application.start(self.startOptions);
+      })(done);
+    },
+    'creates Schema object': function() {
+      var s = this.schema.create({
+        name: String
+      });
+
+      s.should.be.instanceOf(mongoose.Schema);
+    },
+    'can be converted to view object': function(done) {
+      var model = this.app.db.model('Test', this.schema.create({
+        name: String
+      }));
+
+      var m = new model({
+        name: 'bla'
+      });
+
+      utils.spawn(m.toViewObject, m)
+        .then(function(v) {
+          v._id.should.be.defined;
+          v.name.should.eql('bla');
+        })
+        .nodeify(done);
+    },
+    'can limit what keys are shown in view objects': function(done) {
+      var schema = this.schema.create({
+        name: String
+      });
+
+      schema.method('viewObjectKeys', function() {
+        return ['name'];
+      });
+
+      var model = this.app.db.model('Test', schema);
+
+      var m = new model({
+        name: 'bla'
+      });
+
+      utils.spawn(m.toViewObject, m)
+        .should.eventually.eql({ name: 'bla' })
+        .notify(done);
+    }
+  },
+
+
   'session': {
     beforeEach: function(done) {
       var self = this;
