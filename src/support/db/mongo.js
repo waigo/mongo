@@ -3,7 +3,7 @@
 
 
 var debug = require('debug')('waigo-mongo'),
-  mongoose = require('mongoose'),
+  mongoose = require('mongoose-q')(require('mongoose')),
   Promise = require('bluebird');
 
 /**

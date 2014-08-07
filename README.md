@@ -6,6 +6,8 @@ This [waigo](http://waigojs.com) plugin provides:
 * Mongo session store ([koa-session-mongo](https://www.npmjs.org/package/koa-session-mongo))
 * A Mongoose [schema](https://github.com/waigo/mongo/blob/master/src/support/db/mongoose/schema.js) constructor which makes it easy to create view objects from model instances.
 
+For your convenience [mongoose-q](https://www.npmjs.org/package/mongoose-q) is used as a wrapper around mongoose, so that you can easily obtain Promises from model queries.
+
 
 ## Installation
 

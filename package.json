@@ -1,6 +1,6 @@
 {
   "name": "waigo-mongo",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Mongo database connection and session store for Waigo",
   "main": "index.js",
   "scripts": {
@@ -37,9 +37,10 @@
     "waigo-test-utils": "git://github.com/waigo/test-utils.git"
   },
   "dependencies": {
-    "debug": "~0.8.1",
     "bluebird": "~1.2.4",
+    "debug": "~0.8.1",
     "koa-session-mongo": "~1.0.1",
-    "mongoose": "~3.8.12"
+    "mongoose": "~3.8.12",
+    "mongoose-q": "0.0.10"
   }
 }

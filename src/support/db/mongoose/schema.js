@@ -1,7 +1,7 @@
 "use strict";
 
 
-var mongoose = require('mongoose'),
+var mongoose = require('mongoose-q')(require('mongoose')),
   waigo = require('waigo');
 
 
