@@ -5,11 +5,6 @@ var mongoose = require('mongoose-q')(require('mongoose')),
   waigo = require('waigo');
 
 
-var viewObjectMethodName = Object.keys(
-    waigo.load('support/mixins').HasViewObject
-).pop();
-
-
 
 
 /** @type {Object} Base schema class. */
@@ -77,13 +72,12 @@ exports.create = function(schemaDescription, options) {
   });
 
 
-
   /**
    * Get view object representation of this model.
    * @param  {Object} ctx Request context.
    * @return {Object}
    */
-  schema.method(viewObjectMethodName, function*(ctx) {
+  schema.method('toViewObject', function*(ctx) {
     var self = this;
 
     var ret = {};
