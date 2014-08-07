@@ -68,3 +68,30 @@ test['session'] = {
   }
 };
 
+
+
+test['schema'] = {
+  beforeEach: function(done) {
+    var self = this;
+
+    shell.cp('-Rf', path.join(__dirname, '/../src/support'), utils.appFolder);
+
+    co(function*() {
+      yield* waigo.init({
+        appFolder: utils.appFolder
+      });
+    })(done);
+  },
+
+  afterEach: function(done) {    
+    shell.rm('-rf', path.join(utils.appFolder, 'support'));
+    done();
+  },
+
+  'exports Schema': function() {
+    var schema = waigo.load('support/db/mongoose/schema');
+
+    schema.Schema.should.eql(mongoose.Schema);
+  },
+};
+

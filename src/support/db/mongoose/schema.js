@@ -11,6 +11,12 @@ var viewObjectMethodName = Object.keys(
 
 
 
+
+/** @type {Object} Base schema class. */
+exports.Schema = mongoose.Schema;
+
+
+
 /**
  * Create a Mongoose schema.
  *
