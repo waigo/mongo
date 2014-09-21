@@ -331,7 +331,48 @@ test['mongo'] = {
 
       });      
     }    
+  },
 
-  }
+
+  'check indexes': {
+    beforeEach: function() {
+      var self = this;
+
+      self.app.testConfig.startupSteps = ['logging', 'database', 'models', 'checkMongooseIndexes'];
+
+      self.app.testConfig.db = {
+        mongo: {
+          host: '127.0.0.1',
+          port: 27017,
+          db: 'waigo-mongo-test'
+        }
+      };
+    },
+
+    'checks indexes': function(done) {
+      var self = this;
+
+      utils.spawn(function*() {
+        yield* self.Application.start(self.startOptions);        
+      })
+        .then(function() {
+          return new Q(function(resolve, reject){
+            self.app.db.collections.users.getIndexes(function(err, indexes) {
+              if (err) return reject(err);
+
+              try {
+                Object.keys(indexes).length.should.eql(2);
+                
+                resolve();
+              } catch (err) {
+                reject(err);
+              }
+            });
+          });
+        })
+        .nodeify(done);
+    }
+  },
+
 };
 

@@ -6,7 +6,6 @@ var mongoose = require('mongoose-q')(require('mongoose')),
 
 
 
-
 /** @type {Object} Base schema class. */
 exports.Schema = mongoose.Schema;
 

@@ -5,9 +5,9 @@ This [waigo](http://waigojs.com) plugin provides:
 * Mongo database connection ([mongoose](https://www.npmjs.org/package/mongoose))
 * Mongo session store ([koa-session-mongo](https://www.npmjs.org/package/koa-session-mongo))
 * A Mongoose [schema](https://github.com/waigo/mongo/blob/master/src/support/db/mongoose/schema.js) constructor which makes it easy to create view objects from model instances.
+* [Startup step](https://github.com/waigo/mongo/blob/master/src/support/startup/checkMongooseIndexes.js) to ensure indexes are ready.
 
 For your convenience [mongoose-q](https://www.npmjs.org/package/mongoose-q) is used as a wrapper around mongoose, so that you can easily obtain Promises from model queries.
-
 
 ## Installation
 
@@ -146,6 +146,42 @@ module.exports = function*(app) {
 ```
 
 Now the controller render call will result in a view object containing just the `name` key, and the value of this key will be the `name` model instance value surrounded by square brackets (`[]`).
+
+## Startup step to check Mongoose indexes
+
+If you enable this startup step then the mongoose [`ensureIndexes()`](http://mongoosejs.com/docs/api.html#model_Model.ensureIndexes) call will be used to ensure that MongoDB has actually setup the indexes you've specified in your models, for maximum performance.
+
+In your configuration file enable the `checkMongooseIndexes` startup step after the `models` step:
+
+```javascript
+module.exports = function(config) {
+  ...
+
+  config.startupSteps = [
+    ...
+    'database',
+    'models',
+    'checkMongooseIndexes'
+    ...
+  ];
+
+  config.db = {
+    mongo: {
+      host: '127.0.0.1',
+      port: '27017',
+      db: 'your_db_name'
+    }
+  }
+  
+  ...
+}
+```
+
+Now during startup you will see something like:
+
+```sh
+2014-09-17T17:07:38.074Z - debug: Checking Mongoose db indexes...
+```
 
 ## License
 
