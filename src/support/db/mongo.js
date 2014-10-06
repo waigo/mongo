@@ -21,11 +21,18 @@ var debug = require('debug')('waigo-mongo'),
  * @param {String} dbConfig.host server host
  * @param {Integer} dbConfig.port server port
  * @param {String} dbConfig.db database name
+ * @param {String} [dbConfig.user] auth username
+ * @param {String} [dbConfig.pass] auth password
  *
  * @return {Object} db connection.
  */
 exports.create = function*(dbConfig) {
-  var url = 'mongodb://' + dbConfig.host + ':' + dbConfig.port + '/' + dbConfig.db;
+  var auth = '';
+  if (dbConfig.user) {
+    auth = dbConfig.user + ':' + dbConfig.pass + '@';
+  }
+
+  var url = 'mongodb://' + auth + dbConfig.host + ':' + dbConfig.port + '/' + dbConfig.db;
   debug(url);
 
   var db = mongoose.createConnection(url);
