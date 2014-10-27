@@ -1,6 +1,6 @@
 {
   "name": "waigo-mongo",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Mongo database connection and session store for Waigo",
   "main": "index.js",
   "scripts": {
