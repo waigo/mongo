@@ -33,7 +33,7 @@
     "matchdep": "~0.3.0",
     "shelljs": "~0.2.6",
     "supertest": "~0.10.0",
-    "waigo": "^1.5.5",
+    "waigo": "^1.7.2",
     "waigo-test-utils": "git://github.com/waigo/test-utils.git"
   },
   "dependencies": {

@@ -39,6 +39,7 @@ test['mongo'] = {
 
       self.startOptions = { postConfig: function(config) {
         config.startupSteps = self.app.testConfig.startupSteps || [];
+        config.shutdownSteps = self.app.testConfig.shutdownSteps || [];
         config.db = self.app.testConfig.db || null;
         config.middleware = self.app.testConfig.middleware || { 
           order: [],
@@ -101,7 +102,33 @@ test['mongo'] = {
         self.app.db.collection('test').should.not.be.undefined;
 
       })(done);
-    }    
+    },
+
+    'can be shutdown': function(done) {
+      var self = this;
+
+      self.app.testConfig.shutdownSteps = ['database'];
+
+      self.app.testConfig.db = {
+        mongo: {
+          host: '127.0.0.1',
+          port: 27017,
+          db: 'waigo-mongo-test'
+        }
+      };
+
+      co(function*() {
+        yield* self.Application.start(self.startOptions);
+
+        self.app.db.should.not.be.undefined;
+
+        yield* self.Application.shutdown();
+
+        self.app.db.collection('test').should.not.be.undefined;
+
+      })(done);
+
+    }
   },
 
 

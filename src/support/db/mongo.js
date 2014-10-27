@@ -49,3 +49,19 @@ exports.create = function*(dbConfig) {
     });
   });
 };
+
+
+
+/**
+ * Shutdown all database connections.
+ */
+exports.shutdown = function*() {
+  return new Promise(function(resolve, reject) {
+    mongoose.disconnect(function(err) {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
+};
+
+
